@@ -1,0 +1,83 @@
+<style>
+  .row {
+    display: flex;
+    padding: 2px 3px;
+  }
+  .delim {
+    font-size: 8pt;
+    color: rgba(0,0,0,.4)
+  }
+  .block {
+    font-size: 16pt;
+    color: rgba(0,0,0,.8);
+    border-radius: 8px;
+    margin: 2px 3px;
+    padding: 2px 7px;
+    display: flex;
+    align-items: center;
+    font-family: monospace;
+    box-shadow: 0 0 2px rgba(0,0,0,.3);
+  }
+  .block:hover {
+    cursor: default;
+    border: solid rgba(0,0,0,.7);
+    border-width: 0 thin;
+  }
+  .application {
+    background: rgb(255, 224, 178);
+  }
+  .abstraction {
+    background: rgb(187, 222, 251);
+  }
+  .var {
+    background: rgb(220, 237, 200);
+  }
+  .value {
+    background: rgb(209, 196, 233);
+  }
+  .num {
+    background: rgb(255, 249, 196);
+  }
+  .expr-input {
+    font-family: monospace;
+    padding: 3px 5px;
+    width: 500px;
+  }
+</style>
+<div id="template">
+  <input v-model="expression" class="expr-input"/><button @click="run">Solve</button>
+  <p v-if="error">
+    <b>Error:</b> {{ error }}
+  </p>
+  <ol>
+    <li v-for="expression in expressions">
+      <div class="row">
+        <expr :expr="expression"></expr>
+      </div>
+    </li>
+  </ol>
+</div>
+<script type="text/x-template" id="expression">
+  <span class="application block" v-if="expr.type === 'application'" :title="stringify(expr)">
+    <expr :expr="expr.f"></expr>
+    <span class="delim">$</span>
+    <expr :expr="expr.arg"></expr>
+  </span>
+  <span class="abstraction block" v-else-if="expr.type === 'abstraction'" :title="stringify(expr)">
+    <span class="var block">λ{{ expr.v }}</span>
+    <span class="delim">.</span>
+    <expr :expr="expr.body"></expr>
+  </span>
+  <span class="var block" v-else-if="expr.type === 'symbol'">
+    {{ expr.sym }}
+  </span>
+  <span v-else-if="typeof expr === 'number'" class="num block">
+    {{ expr }}
+  </span>
+  <span v-else class="value block">
+    {{ expr }}
+  </span>
+</script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="lambda.js"></script>
+<script src="script.js"></script>
